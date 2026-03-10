@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIED患者説明ツール</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.5; }
+    h2 { color: #0055a5; }
+    .section { margin-bottom: 40px; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+    label { display: block; margin: 10px 0; }
+    .consent { margin-top: 15px; }
+    canvas { border: 1px solid #000; display: block; margin-top: 10px; }
+    button { margin-top: 10px; padding: 5px 10px; }
+  </style>
+</head>
+<body>
+  <h1>手術説明＆同意ツール</h1>
+  <p>患者さん・ご家族に、手術と植込みデバイスの3つの説明を順番に行います。<br>
+  同意は紙に署名していただきますが、このツールで理解度をチェックできます。</p>
+
+  <!-- ① トラッキング -->
+  <div class="section" id="tracking">
+    <h2>① デバイストラッキングについて</h2>
+    <video width="400" controls>
+      <source src="tracking.mp4" type="video/mp4">
+      お使いのブラウザは動画再生に対応していません。
+    </video>
+    <p>植込みデバイスの機種やシリアル番号を病院で管理する仕組みです。</p>
+    <ul>
+      <li>不具合やリコールの対応がスムーズになります</li>
+      <li>安全管理のために必要です</li>
+      <li>使用するメーカー例：
+        Medtronic / Abbott / Boston Scientific
+      </li>
+    </ul>
+    <div class="consent">
+      <label><input type="checkbox"> 上記説明を理解し、トラッキングに同意します</label>
+      <label>患者サイン：</label>
+      <canvas id="sigTracking" width="400" height="100"></canvas>
+      <button onclick="clearCanvas('sigTracking')">クリア</button>
+    </div>
+  </div>
+
+  <!-- ② MRIカード -->
+  <div class="section" id="mri">
+    <h2>② MRIカードについて</h2>
+    <video width="400" controls>
+      <source src="mri.mp4" type="video/mp4">
+      お使いのブラウザは動画再生に対応していません。
+    </video>
+    <p>植込みデバイスの情報カードです。MRI検査時に必ず提示してください。</p>
+    <ul>
+      <li>MRI対応機種でも条件付きで安全に検査できます</li>
+      <li>他院受診時にも必要です</li>
+    </ul>
+    <div class="consent">
+      <label><input type="checkbox"> MRIカードの説明を受け理解しました</label>
+      <label>患者サイン：</label>
+      <canvas id="sigMRI" width="400" height="100"></canvas>
+      <button onclick="clearCanvas('sigMRI')">クリア</button>
+    </div>
+  </div>
+
+  <!-- ③ 遠隔モニタリング -->
+  <div class="section" id="remote">
+    <h2>③ 遠隔モニタリングについて</h2>
+    <video width="400" controls>
+      <source src="remote.mp4" type="video/mp4">
+      お使いのブラウザは動画再生に対応していません。
+    </video>
+    <p>植込みデバイスの情報を自宅から病院に自動送信する仕組みです。</p>
+    <ul>
+      <li>毎日データ送信され、異常時のみ病院に通知</li>
+      <li>緊急通報ではありません</li>
+      <li>対応メーカー例：
+        Medtronic CareLink / Abbott Merlin.net / Boston Scientific LATITUDE
+      </li>
+    </ul>
+    <div class="consent">
+      <label><input type="checkbox"> 遠隔モニタリングに同意します</label>
+      <label>患者サイン：</label>
+      <canvas id="sigRemote" width="400" height="100"></canvas>
+      <button onclick="clearCanvas('sigRemote')">クリア</button>
+    </div>
+  </div>
+
+  <script>
+    // Canvas署名機能（簡易）
+    function initCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      canvas.addEventListener('mousedown', (e) => { drawing = true; ctx.moveTo(e.offsetX, e.offsetY); });
+      canvas.addEventListener('mousemove', (e) => { if(drawing) ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); });
+      canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
+      canvas.addEventListener('mouseleave', () => { drawing = false; ctx.beginPath(); });
+    }
+
+    function clearCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // 初期化
+    ['sigTracking','sigMRI','sigRemote'].forEach(initCanvas);
+  </script>
+</body>
+</html>
